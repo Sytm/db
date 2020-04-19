@@ -226,8 +226,8 @@ public class NamedPreparedStatement {
      * <code>INSERT INTO table (id, name) VALUES ?, ?</code><br>
      * And the following index mappings:
      * <ul>
-     *     <li><code>id   -> [ 1 ]</code></li>
-     *     <li><code>name -> [ 2 ]</code></li>
+     *     <li><pre><code>id   -{@literal >} [ 1 ]</code></pre></li>
+     *     <li><pre><code>name -{@literal >} [ 2 ]</code></pre></li>
      * </ul>
      *
      * @param sql The SQL string to parse

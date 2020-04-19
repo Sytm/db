@@ -15,6 +15,32 @@
         <spigot.version>1.13.2-R0.1-SNAPSHOT</spigot.version>
     </properties>
 
+    <distributionManagement>
+        <repository>
+            <id>sytm-nexus</id>
+            <url>https://repo.sytm.de/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>sytm-nexus</id>
+            <url>https://repo.sytm.de/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>sytm-nexus</id>
+            <url>https://repo.sytm.de/repository/maven-hosted/</url>
+        </repository>
+        <repository>
+            <id>sytm-spigot</id>
+            <url>https://repo.sytm.de/repository/maven-spigot/</url>
+        </repository>
+        <repository>
+            <id>sytm-sonatype</id>
+            <url>https://repo.sytm.de/repository/maven-sonatype/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>

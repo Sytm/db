@@ -20,7 +20,7 @@ public class NamedPreparedStatement {
     private final Map<String, int[]> indexMappings;
 
     /**
-     * Creates a new PreparedStatement using the provided connection and sql string
+     * Creates a new PreparedStatement using the provided connection and sql string. This is recommended for a one time use
      *
      * @param connection The connection to use
      * @param sql        The sql string with to use
@@ -29,6 +29,11 @@ public class NamedPreparedStatement {
     public NamedPreparedStatement(Connection connection, String sql) throws SQLException {
         Preconditions.checkNotNull(connection, "The connection to use cannot be null");
         NamedParameterParseResult nppr = parseSQLString(sql);
+        this.indexMappings = nppr.getIndexMappings();
+        this.preparedStatement = connection.prepareStatement(nppr.getSubstitutedSql());
+    }
+
+    private NamedPreparedStatement(Connection connection, NamedParameterParseResult nppr) throws SQLException {
         this.indexMappings = nppr.getIndexMappings();
         this.preparedStatement = connection.prepareStatement(nppr.getSubstitutedSql());
     }
@@ -311,6 +316,18 @@ public class NamedPreparedStatement {
          */
         public Map<String, int[]> getIndexMappings() {
             return indexMappings;
+        }
+
+        /**
+         * Creates a new NamedPreparedStatement using the already parsed SQL string
+         *
+         * @param connection The connection to create a PreparedStatement on
+         * @return A new NamedPreparedStatement using this SQL string
+         * @throws SQLException If a database error occurs or the connection has been closed
+         */
+        public NamedPreparedStatement createStatement(Connection connection) throws SQLException {
+            Preconditions.checkNotNull(connection, "The connection to use cannot be null");
+            return new NamedPreparedStatement(connection, this);
         }
     }
 }

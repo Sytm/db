@@ -1,6 +1,5 @@
 package de.md5lukas.db;
 
-import de.md5lukas.db.NamedPreparedStatement.NamedParameterParseResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

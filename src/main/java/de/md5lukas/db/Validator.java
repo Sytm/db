@@ -5,6 +5,9 @@ import org.jetbrains.annotations.Nullable;
 
 final class Validator {
 
+    private Validator() {
+    }
+
     public static void checkNotNull(@Nullable Object o, @NotNull String message) {
         if (o == null) {
             throw new NullPointerException(message);

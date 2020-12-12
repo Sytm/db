@@ -1,6 +1,7 @@
 package de.md5lukas.db;
 
-import com.google.common.base.Preconditions;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,10 +15,12 @@ import java.util.Map;
 /**
  * Wrapper class for {@link PreparedStatement} that allows one to use named parameters instead of having to use indexed parameters
  */
-public class NamedPreparedStatement {
+public final class NamedPreparedStatement {
 
+    @NotNull
     private final PreparedStatement preparedStatement;
-    private final Map<String, int[]> indexMappings;
+    @NotNull
+    private final Map<@NotNull String, int[]> indexMappings;
 
     /**
      * Creates a new PreparedStatement using the provided connection and sql string. This is recommended for a one time use
@@ -26,14 +29,14 @@ public class NamedPreparedStatement {
      * @param sql        The sql string with to use
      * @throws SQLException If a database error occurs or the connection has been closed
      */
-    public NamedPreparedStatement(Connection connection, String sql) throws SQLException {
-        Preconditions.checkNotNull(connection, "The connection to use cannot be null");
+    public NamedPreparedStatement(@NotNull Connection connection, @NotNull String sql) throws SQLException {
+        Validator.checkNotNull(connection, "The connection to use cannot be null");
         NamedParameterParseResult nppr = parseSQLString(sql);
         this.indexMappings = nppr.getIndexMappings();
         this.preparedStatement = connection.prepareStatement(nppr.getSubstitutedSql());
     }
 
-    NamedPreparedStatement(Connection connection, NamedParameterParseResult nppr) throws SQLException {
+    NamedPreparedStatement(@NotNull Connection connection, @NotNull NamedParameterParseResult nppr) throws SQLException {
         this.indexMappings = nppr.getIndexMappings();
         this.preparedStatement = connection.prepareStatement(nppr.getSubstitutedSql());
     }
@@ -41,7 +44,7 @@ public class NamedPreparedStatement {
     /**
      * @return The {@link PreparedStatement} that is used internally
      */
-    public PreparedStatement getPreparedStatement() {
+    public @NotNull PreparedStatement getPreparedStatement() {
         return preparedStatement;
     }
 
@@ -54,7 +57,7 @@ public class NamedPreparedStatement {
      * @throws IllegalArgumentException If the name has not been registered
      * @see PreparedStatement#executeQuery()
      */
-    public ResultSet executeQuery() throws SQLException {
+    public @NotNull ResultSet executeQuery() throws SQLException {
         return preparedStatement.executeQuery();
     }
 
@@ -81,7 +84,7 @@ public class NamedPreparedStatement {
      * @throws IllegalArgumentException If the name has not been registered
      * @see PreparedStatement#setBoolean(int, boolean)
      */
-    public void setBoolean(String name, boolean x) throws SQLException {
+    public void setBoolean(@NotNull String name, boolean x) throws SQLException {
         for (int index : getIndexes(name)) {
             preparedStatement.setBoolean(index, x);
         }
@@ -97,7 +100,7 @@ public class NamedPreparedStatement {
      * @throws IllegalArgumentException If the name has not been registered
      * @see PreparedStatement#setByte(int, byte)
      */
-    public void setByte(String name, byte x) throws SQLException {
+    public void setByte(@NotNull String name, byte x) throws SQLException {
         for (int index : getIndexes(name)) {
             preparedStatement.setByte(index, x);
         }
@@ -113,7 +116,7 @@ public class NamedPreparedStatement {
      * @throws IllegalArgumentException If the name has not been registered
      * @see PreparedStatement#setShort(int, short)
      */
-    public void setShort(String name, short x) throws SQLException {
+    public void setShort(@NotNull String name, short x) throws SQLException {
         for (int index : getIndexes(name)) {
             preparedStatement.setShort(index, x);
         }
@@ -129,7 +132,7 @@ public class NamedPreparedStatement {
      * @throws IllegalArgumentException If the name has not been registered
      * @see PreparedStatement#setInt(int, int)
      */
-    public void setInt(String name, int x) throws SQLException {
+    public void setInt(@NotNull String name, int x) throws SQLException {
         for (int index : getIndexes(name)) {
             preparedStatement.setInt(index, x);
         }
@@ -145,7 +148,7 @@ public class NamedPreparedStatement {
      * @throws IllegalArgumentException If the name has not been registered
      * @see PreparedStatement#setLong(int, long)
      */
-    public void setLong(String name, long x) throws SQLException {
+    public void setLong(@NotNull String name, long x) throws SQLException {
         for (int index : getIndexes(name)) {
             preparedStatement.setLong(index, x);
         }
@@ -161,7 +164,7 @@ public class NamedPreparedStatement {
      * @throws IllegalArgumentException If the name has not been registered
      * @see PreparedStatement#setFloat(int, float)
      */
-    public void setFloat(String name, float x) throws SQLException {
+    public void setFloat(@NotNull String name, float x) throws SQLException {
         for (int index : getIndexes(name)) {
             preparedStatement.setFloat(index, x);
         }
@@ -177,7 +180,7 @@ public class NamedPreparedStatement {
      * @throws IllegalArgumentException If the name has not been registered
      * @see PreparedStatement#setDouble(int, double)
      */
-    public void setDouble(String name, double x) throws SQLException {
+    public void setDouble(@NotNull String name, double x) throws SQLException {
         for (int index : getIndexes(name)) {
             preparedStatement.setDouble(index, x);
         }
@@ -193,7 +196,7 @@ public class NamedPreparedStatement {
      * @throws IllegalArgumentException If the name has not been registered
      * @see PreparedStatement#setString(int, String)
      */
-    public void setString(String name, String x) throws SQLException {
+    public void setString(@NotNull String name, @Nullable String x) throws SQLException {
         for (int index : getIndexes(name)) {
             preparedStatement.setString(index, x);
         }
@@ -207,14 +210,14 @@ public class NamedPreparedStatement {
      * @throws NullPointerException     If the name is null
      * @throws IllegalArgumentException If the name has not been registered
      */
-    public int[] getIndexes(String name) {
+    public int[] getIndexes(@NotNull String name) {
         checkParameterName(name);
-        return indexMappings.get(name);
+        return indexMappings.get(name).clone();
     }
 
-    private void checkParameterName(String name) {
-        Preconditions.checkNotNull(name, "The name of the parameter to set cannot be null");
-        Preconditions.checkArgument(indexMappings.containsKey(name), "The parameter name %s was provided, but is not registered", name);
+    private void checkParameterName(@NotNull String name) {
+        Validator.checkNotNull(name, "The name of the parameter to set cannot be null");
+        Validator.checkArgument(indexMappings.containsKey(name), "The parameter name %s was provided, but is not registered", name);
     }
 
     /**
@@ -239,8 +242,8 @@ public class NamedPreparedStatement {
      * @return The substituted SQL string and index mappings in a wrapper object
      * @throws NullPointerException If the provided SQL string is <code>null</code>
      */
-    public static NamedParameterParseResult parseSQLString(String sql) {
-        Preconditions.checkNotNull(sql, "The SQL string to parse cannot be null");
+    public static @NotNull NamedParameterParseResult parseSQLString(@NotNull String sql) {
+        Validator.checkNotNull(sql, "The SQL string to parse cannot be null");
         StringBuilder result = new StringBuilder(), parameterName = new StringBuilder();
         int parameterIndex = 1;
         Map<String, List<Integer>> indexCache = new HashMap<>();

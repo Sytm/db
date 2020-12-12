@@ -1,6 +1,6 @@
 package de.md5lukas.db;
 
-import com.google.common.base.Preconditions;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -9,12 +9,14 @@ import java.util.Map;
 /**
  * Class containing the result of a parsed SQL string with named parameters
  */
-public class NamedParameterParseResult {
+public final class NamedParameterParseResult {
 
+    @NotNull
     private final String substitutedSql;
-    private final Map<String, int[]> indexMappings;
+    @NotNull
+    private final Map<@NotNull String, int[]> indexMappings;
 
-    NamedParameterParseResult(String substitutedSql, Map<String, int[]> indexMappings) {
+    NamedParameterParseResult(@NotNull String substitutedSql, @NotNull Map<@NotNull String, int[]> indexMappings) {
         this.substitutedSql = substitutedSql;
         this.indexMappings = indexMappings;
     }
@@ -24,7 +26,7 @@ public class NamedParameterParseResult {
      *
      * @return The string that can be used to create a PreparedStatement
      */
-    public String getSubstitutedSql() {
+    public @NotNull String getSubstitutedSql() {
         return substitutedSql;
     }
 
@@ -33,7 +35,7 @@ public class NamedParameterParseResult {
      *
      * @return The index mappings
      */
-    public Map<String, int[]> getIndexMappings() {
+    public @NotNull Map<@NotNull String, int[]> getIndexMappings() {
         return indexMappings;
     }
 
@@ -44,8 +46,8 @@ public class NamedParameterParseResult {
      * @return A new NamedPreparedStatement using this SQL string
      * @throws SQLException If a database error occurs or the connection has been closed
      */
-    public NamedPreparedStatement createStatement(Connection connection) throws SQLException {
-        Preconditions.checkNotNull(connection, "The connection to use cannot be null");
+    public @NotNull NamedPreparedStatement createStatement(@NotNull Connection connection) throws SQLException {
+        Validator.checkNotNull(connection, "The connection to use cannot be null");
         return new NamedPreparedStatement(connection, this);
     }
 }

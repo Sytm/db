@@ -50,8 +50,12 @@ public class SQLiteHelper {
      * Creates a new instance of the SQLiteHelper with the given file. The SQLite database file will be the provided file
      *
      * @param file The file for the database
+     * @throws IllegalStateException If a SQLite driver is not available
      */
     public SQLiteHelper(@NotNull File file) {
+        if (!checkAvailability())
+            throw new IllegalStateException("The SQLite driver is not available");
+
         Validator.checkNotNull(file, "The file for the SQLite database cannot be null");
         this.file = file;
     }
@@ -61,12 +65,8 @@ public class SQLiteHelper {
      *
      * @return A Connection to the SQLite database
      * @throws SQLException          If a database access error occurs
-     * @throws IllegalStateException If a SQLite driver is not available
      */
     public final @NotNull Connection getConnection() throws SQLException {
-        if (!checkAvailability())
-            throw new IllegalStateException("The SQLite driver is not available");
-
         if (connection == null) {
             synchronized (connectionLock) {
                 if (connection == null) {
